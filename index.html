@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Futurev Prep — a focused WAEC Biology learning assistant prototype.">
+  <title>Futurev Prep — Learn smarter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="Futurev Prep home">
+      <span class="brand-mark">F</span>
+      <span>futurev<span class="dot">.</span></span>
+    </a>
+    <nav class="desktop-nav" aria-label="Main navigation">
+      <button data-route="learn">Learn</button>
+      <button data-route="practice">Practice</button>
+      <button data-route="progress">Progress</button>
+    </nav>
+    <button class="mobile-menu" id="menuBtn" aria-label="Open menu">☰</button>
+  </header>
+
+  <div id="mobileNav" class="mobile-nav">
+    <button data-route="learn">Learn</button>
+    <button data-route="practice">Practice</button>
+    <button data-route="progress">Progress</button>
+  </div>
+
+  <main>
+    <!-- HOME -->
+    <section id="home" class="view active">
+      <div class="container hero">
+        <div class="hero-copy">
+          <span class="pill"><span class="pulse"></span> WAEC PREP • BETA</span>
+          <h1>Study with a plan.<br><em>Not just a chatbot.</em></h1>
+          <p>Understand a topic, practise it, see where you struggle, and know what to study next.</p>
+        </div>
+
+        <div class="study-card">
+          <div class="card-top">
+            <div>
+              <span class="label">START A STUDY SESSION</span>
+              <h2>What are you learning today?</h2>
+            </div>
+            <div class="subject-icon">BIO</div>
+          </div>
+          <div class="field-grid">
+            <label>
+              <span>Subject</span>
+              <select id="subject">
+                <option>Biology</option>
+              </select>
+            </label>
+            <label>
+              <span>Topic</span>
+              <input id="topicInput" value="Photosynthesis" autocomplete="off">
+            </label>
+          </div>
+          <button id="startBtn" class="btn btn-primary btn-wide">Start learning <span>→</span></button>
+          <p class="privacy-note">Text-first and lightweight. No account required for this demo.</p>
+        </div>
+
+        <div class="feature-row">
+          <div><span class="feature-number">01</span><strong>Learn</strong><small>Simple explanations</small></div>
+          <div><span class="feature-number">02</span><strong>Practise</strong><small>Exam-style questions</small></div>
+          <div><span class="feature-number">03</span><strong>Improve</strong><small>Find your weak spots</small></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEARN -->
+    <section id="learn" class="view">
+      <div class="container narrow">
+        <div class="progress-line"><span class="filled"></span><span></span><span></span></div>
+        <div class="page-heading">
+          <div>
+            <span class="eyebrow">BIOLOGY / PHOTOSYNTHESIS</span>
+            <h1>Let's understand it first.</h1>
+            <p>Read the short lesson, then test what you remember.</p>
+          </div>
+          <span class="step-badge">STEP 1 OF 3</span>
+        </div>
+
+        <article class="lesson-card">
+          <div class="lesson-icon">☼</div>
+          <div>
+            <h2>What is photosynthesis?</h2>
+            <p>Photosynthesis is the process by which green plants use light energy to make food from carbon dioxide and water. It takes place mainly in chloroplasts, where chlorophyll absorbs light energy.</p>
+          </div>
+        </article>
+
+        <div class="two-col">
+          <article class="info-card">
+            <span class="mini-label">KEY POINTS</span>
+            <ul class="check-list">
+              <li>Light provides the energy.</li>
+              <li>Carbon dioxide and water are raw materials.</li>
+              <li>Chlorophyll absorbs light energy.</li>
+              <li>Glucose is produced and oxygen is released.</li>
+            </ul>
+          </article>
+          <article class="info-card formula-card">
+            <span class="mini-label">IN SIMPLE FORM</span>
+            <div class="formula">CO₂ + H₂O <span>→</span> Glucose + O₂</div>
+            <p>Light energy is captured by chlorophyll to drive the process.</p>
+          </article>
+        </div>
+
+        <div class="action-row">
+          <button class="btn btn-secondary" data-route="home">← Back</button>
+          <button class="btn btn-primary" data-route="practice">Start practice <span>→</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRACTICE -->
+    <section id="practice" class="view">
+      <div class="container narrow">
+        <div class="progress-line"><span class="filled"></span><span class="filled"></span><span></span></div>
+        <div class="page-heading compact">
+          <div>
+            <span class="eyebrow">PRACTICE</span>
+            <h1>Check your understanding.</h1>
+            <p>Choose the best answer. We'll explain the result after each question.</p>
+          </div>
+          <span id="questionCount" class="step-badge">QUESTION 1 OF 5</span>
+        </div>
+
+        <article id="quizCard" class="quiz-card"></article>
+      </div>
+    </section>
+
+    <!-- PROGRESS -->
+    <section id="progress" class="view">
+      <div class="container narrow">
+        <div class="progress-line"><span class="filled"></span><span class="filled"></span><span class="filled"></span></div>
+        <div class="page-heading">
+          <div>
+            <span class="eyebrow">SESSION SUMMARY</span>
+            <h1>Here's what we found.</h1>
+            <p>Your results become your next study step.</p>
+          </div>
+        </div>
+        <div id="progressContent"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <span>futurev<span class="dot">.</span> prep</span>
+      <span>AI learning assistant • Prototype</span>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
