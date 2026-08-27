@@ -1,274 +1,63 @@
-const $ = (selector) => document.querySelector(selector);
-const $$ = (selector) => [...document.querySelectorAll(selector)];
-
-const quiz = [
-  {
-    area: "Raw materials",
-    question: "Which substance is a raw material used by green plants during photosynthesis?",
-    options: ["Oxygen", "Carbon dioxide", "Glucose", "Chlorophyll"],
-    answer: 1,
-    explanation: "Carbon dioxide is taken in by the plant and used with water to produce glucose."
-  },
-  {
-    area: "Role of chlorophyll",
-    question: "What is the main role of chlorophyll in photosynthesis?",
-    options: ["It releases carbon dioxide", "It absorbs light energy", "It produces water", "It stores oxygen"],
-    answer: 1,
-    explanation: "Chlorophyll absorbs light energy. That energy drives the photosynthetic process."
-  },
-  {
-    area: "Light energy",
-    question: "Which factor provides the energy required for photosynthesis?",
-    options: ["Light", "Oxygen", "Soil", "Protein"],
-    answer: 0,
-    explanation: "Light provides the energy that is captured by chlorophyll."
-  },
-  {
-    area: "Products of photosynthesis",
-    question: "Which product of photosynthesis can be converted and stored by plants as starch?",
-    options: ["Glucose", "Carbon dioxide", "Water", "Chlorophyll"],
-    answer: 0,
-    explanation: "Photosynthesis produces glucose. Plants can convert glucose into starch for storage."
-  },
-  {
-    area: "Photosynthesis process",
-    question: "Which statement best describes photosynthesis?",
-    options: [
-      "Plants use oxygen to make carbon dioxide.",
-      "Green plants use light energy to make food from carbon dioxide and water.",
-      "Plants absorb food directly from the soil.",
-      "Plants use glucose to produce sunlight."
-    ],
-    answer: 1,
-    explanation: "Photosynthesis uses light energy, carbon dioxide and water to produce food, while oxygen is released."
-  }
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const subjects=[
+ {id:"biology",name:"Biology",icon:"BIO",desc:"Life, cells & organisms",topics:["Cell Biology","Nutrition","Osmosis & Diffusion","Respiration","Reproduction","Ecology"]},
+ {id:"chemistry",name:"Chemistry",icon:"CHEM",desc:"Matter, reactions & atoms",topics:["Atomic Structure","Chemical Bonding","Acids, Bases & Salts","Stoichiometry","Organic Chemistry","Electrochemistry"]},
+ {id:"physics",name:"Physics",icon:"PHY",desc:"Forces, energy & matter",topics:["Motion","Forces","Energy","Waves","Electricity","Heat"]},
+ {id:"mathematics",name:"Mathematics",icon:"MATH",desc:"Numbers, algebra & geometry",topics:["Algebra","Simultaneous Equations","Quadratic Equations","Geometry","Trigonometry","Statistics"]},
+ {id:"english",name:"English Language",icon:"ENG",desc:"Grammar, comprehension & writing",topics:["Comprehension","Grammar","Lexis & Structure","Summary","Oral English","Essay Writing"]},
+ {id:"economics",name:"Economics",icon:"ECO",desc:"Markets, money & policy",topics:["Demand & Supply","National Income","Inflation","Money","Market Structures","Public Finance"]},
+ {id:"government",name:"Government",icon:"GOV",desc:"Politics, institutions & civic life",topics:["Constitution","Democracy","Political Parties","Legislature","Executive","Judiciary"]},
+ {id:"geography",name:"Geography",icon:"GEO",desc:"People, places & environment",topics:["Map Reading","Weather & Climate","Population","Rocks","Agriculture","Industry"]},
+ {id:"literature",name:"Literature in English",icon:"LIT",desc:"Drama, prose & poetry",topics:["Poetry","Drama","Prose","Literary Devices","Characterisation","Themes"]},
+ {id:"accounting",name:"Financial Accounting",icon:"ACC",desc:"Records, statements & analysis",topics:["Accounting Concepts","Ledger","Trial Balance","Final Accounts","Cash Book","Depreciation"]},
+ {id:"commerce",name:"Commerce",icon:"COM",desc:"Trade, business & markets",topics:["Trade","Insurance","Banking","Transportation","Business Units","Marketing"]},
+ {id:"agriculture",name:"Agricultural Science",icon:"AGR",desc:"Farming, soil & livestock",topics:["Soil Science","Crop Production","Animal Nutrition","Pests & Diseases","Farm Management","Agricultural Economics"]},
+ {id:"computer",name:"Computer Studies",icon:"ICT",desc:"Computing, data & systems",topics:["Hardware","Software","Data Representation","Networking","Database","Algorithms"]},
+ {id:"crs",name:"CRS",icon:"CRS",desc:"Christian Religious Studies",topics:["Creation","The Prophets","The Gospels","Acts","Christian Living","The Early Church"]},
+ {id:"irs",name:"IRS",icon:"IRS",desc:"Islamic Religious Studies",topics:["Qur'an","Hadith","Tawhid","Sharia","Seerah","Islamic Ethics"]}
 ];
-
-const state = {
-  route: "home",
-  questionIndex: 0,
-  selected: null,
-  submitted: false,
-  score: 0,
-  answers: [],
-  topic: "Photosynthesis"
-};
-
-function saveState() {
-  sessionStorage.setItem("futurevSession", JSON.stringify(state));
+const seed=[
+ {area:"Diffusion",q:"The movement of molecules from a region of high concentration to low concentration is:",o:["Osmosis","Active transport","Transpiration","Diffusion"],a:3,e:"Diffusion is movement of molecules from a region of higher concentration to lower concentration."},
+ {area:"Osmosis",q:"The movement of water across a selectively permeable membrane is:",o:["Diffusion","Osmosis","Active transport","Filtration"],a:1,e:"Osmosis specifically refers to movement of water across a selectively permeable membrane."},
+ {area:"Hypotonic solutions",q:"A red blood cell placed in a hypotonic solution will:",o:["Shrink","Burst","Remain unchanged","Divide"],a:1,e:"Water enters a red blood cell by osmosis in a hypotonic solution, and the cell may burst because it has no cell wall."},
+ {area:"Plasmolysis",q:"Which solution will cause plasmolysis in a plant cell?",o:["Hypotonic","Hypertonic","Isotonic","Neutral"],a:1,e:"A hypertonic solution causes water to leave a plant cell by osmosis, which can lead to plasmolysis."},
+ {area:"Plant cell structure",q:"The rigid structure that prevents plant cells from bursting in hypotonic solutions is the:",o:["Vacuole","Cell wall","Cytoplasm","Plasma membrane"],a:1,e:"The cell wall provides rigid support and helps prevent a plant cell from bursting when water enters."}
+];
+const follow=[
+ {area:"Diffusion",q:"Which situation is the best example of diffusion?",o:["Water entering a plant cell through a selectively permeable membrane","Oxygen moving from an area of higher concentration to lower concentration","Mineral ions moving against a concentration gradient using energy","Water being pulled upward through xylem by transpiration"],a:1,e:"Oxygen moving from higher to lower concentration is diffusion."},
+ {area:"Osmosis",q:"Which condition is necessary for osmosis to occur?",o:["A selectively permeable membrane and water movement","Active transport proteins and ATP only","A rigid cell wall with no membrane","Movement of glucose from low to high concentration"],a:0,e:"Osmosis involves water movement across a selectively permeable membrane."},
+ {area:"Hypertonic solutions",q:"A plant cell loses water and its cell membrane pulls away from the cell wall. This condition is called:",o:["Turgidity","Plasmolysis","Diffusion","Active transport"],a:1,e:"Plasmolysis occurs when a plant cell loses water and the cell membrane pulls away from the cell wall."},
+ {area:"Hypotonic solutions",q:"Why is a plant cell less likely than a red blood cell to burst in a hypotonic solution?",o:["It has no membrane","It has a rigid cell wall","It contains no water","It cannot take in water"],a:1,e:"The rigid cell wall resists excessive expansion when water enters the plant cell."},
+ {area:"Osmosis vs diffusion",q:"Which statement correctly distinguishes osmosis from diffusion?",o:["Osmosis involves only water, while diffusion can involve molecules or particles","Osmosis always requires energy, while diffusion always uses ATP","Diffusion occurs only in plant cells","Osmosis is movement of solute from low to high concentration"],a:0,e:"Osmosis is specifically water movement across a selectively permeable membrane; diffusion is broader."}
+];
+let state={route:"dashboard",subject:"biology",topic:"Osmosis & Diffusion",set:"seed",qi:0,selected:null,submitted:false,score:0,answers:[]};
+function save(){sessionStorage.setItem("futurevMulti",JSON.stringify(state))}
+function load(){try{Object.assign(state,JSON.parse(sessionStorage.getItem("futurevMulti")||"{}"))}catch(e){}}
+function toast(m){let x=$("#toast");x.textContent=m;x.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>x.classList.remove("show"),2200)}
+function route(r){$$(".view").forEach(v=>v.classList.toggle("active",v.id===r));state.route=r;$("#mobileNav").classList.remove("open");window.scrollTo({top:0,behavior:"smooth"});if(r==="dashboard")renderDashboard();if(r==="subjects")renderSubjects();if(r==="topics")renderTopics();if(r==="learn")renderLesson();if(r==="practice")renderQuiz();if(r==="progress")renderProgress();save()}
+$$("[data-route]").forEach(b=>b.addEventListener("click",e=>{e.preventDefault();route(b.dataset.route)}));
+function subjectCard(s){return `<button class="subject-card" data-subject="${s.id}"><div class="subject-icon">${s.icon}</div><h3>${s.name}</h3><p>${s.desc}</p></button>`}
+function bindSubjectCards(){ $$(".subject-card").forEach(b=>b.addEventListener("click",()=>{state.subject=b.dataset.subject;route("topics")}))}
+function renderDashboard(){
+ $("#subjectGrid").innerHTML=subjects.slice(0,8).map(subjectCard).join("");bindSubjectCards();
+ const vals=[["Biology",72],["Mathematics",81],["Chemistry",64],["English",58]];
+ $("#progressBars").innerHTML=vals.map(x=>`<div class="progress-row"><label>${x[0]}</label><span><i style="width:${x[1]}%"></i></span><b>${x[1]}%</b></div>`).join("");
+ $$("[data-action=continue]").forEach(b=>b.onclick=()=>{state.subject="biology";state.topic="Osmosis & Diffusion";route("practice")})
 }
-
-function loadState() {
-  try {
-    const saved = JSON.parse(sessionStorage.getItem("futurevSession"));
-    if (saved) Object.assign(state, saved);
-  } catch (_) {}
-}
-
-function toast(message) {
-  const el = $("#toast");
-  el.textContent = message;
-  el.classList.add("show");
-  clearTimeout(toast.timer);
-  toast.timer = setTimeout(() => el.classList.remove("show"), 2200);
-}
-
-function routeTo(route) {
-  if (route === "practice" && state.answers.length === 0) {
-    state.questionIndex = 0;
-    state.selected = null;
-    state.submitted = false;
-  }
-
-  $$(".view").forEach(view => view.classList.toggle("active", view.id === route));
-  state.route = route;
-  $("#mobileNav").classList.remove("open");
-  window.scrollTo({top: 0, behavior: "smooth"});
-
-  if (route === "practice") renderQuestion();
-  if (route === "progress") renderProgress();
-  saveState();
-}
-
-function bindNavigation() {
-  $$("[data-route]").forEach(button => {
-    button.addEventListener("click", event => {
-      event.preventDefault();
-      routeTo(button.dataset.route);
-    });
-  });
-}
-
-function renderQuestion() {
-  const q = quiz[state.questionIndex];
-  $("#questionCount").textContent = `QUESTION ${state.questionIndex + 1} OF ${quiz.length}`;
-
-  const letters = ["A", "B", "C", "D"];
-  $("#quizCard").innerHTML = `
-    <span class="question-number">QUESTION ${state.questionIndex + 1}</span>
-    <h2>${q.question}</h2>
-    <div class="options">
-      ${q.options.map((option, index) => `
-        <button class="option ${state.selected === index ? "selected" : ""}" data-index="${index}" ${state.submitted ? "disabled" : ""}>
-          <span class="option-key">${letters[index]}</span>${option}
-        </button>
-      `).join("")}
-    </div>
-    <div id="feedbackArea"></div>
-    <div class="quiz-footer">
-      <small>${state.submitted ? "Answer reviewed." : "Choose one answer."}</small>
-      <button id="quizAction" class="btn btn-primary" ${state.selected === null ? "disabled" : ""}>
-        ${state.submitted ? (state.questionIndex === quiz.length - 1 ? "View my progress →" : "Next question →") : "Submit answer"}
-      </button>
-    </div>
-  `;
-
-  if (state.submitted) {
-    const result = state.answers[state.questionIndex];
-    const correct = result.correct;
-    $("#feedbackArea").innerHTML = `
-      <div class="feedback ${correct ? "correct" : "wrong"}">
-        <strong>${correct ? "✓ Correct" : "✗ Not quite"}</strong>
-        ${correct ? "Nice work." : `The correct answer is <b>${q.options[q.answer]}</b>.`}
-        ${q.explanation}
-      </div>
-    `;
-  }
-
-  $$(".option").forEach(button => {
-    button.addEventListener("click", () => {
-      if (state.submitted) return;
-      state.selected = Number(button.dataset.index);
-      $$(".option").forEach(item => item.classList.remove("selected"));
-      button.classList.add("selected");
-      $("#quizAction").disabled = false;
-    });
-  });
-
-  $("#quizAction").addEventListener("click", submitOrNext);
-}
-
-function submitOrNext() {
-  if (!state.submitted) {
-    const q = quiz[state.questionIndex];
-    const correct = state.selected === q.answer;
-
-    state.answers[state.questionIndex] = {
-      area: q.area,
-      selected: state.selected,
-      correct
-    };
-
-    if (correct) state.score += 1;
-    state.submitted = true;
-    saveState();
-    renderQuestion();
-    return;
-  }
-
-  if (state.questionIndex === quiz.length - 1) {
-    routeTo("progress");
-  } else {
-    state.questionIndex += 1;
-    state.selected = null;
-    state.submitted = false;
-    saveState();
-    renderQuestion();
-  }
-}
-
-function renderProgress() {
-  const total = quiz.length;
-  const pct = Math.round((state.score / total) * 100);
-  const wrong = state.answers.filter(Boolean).filter(answer => !answer.correct);
-  const right = state.answers.filter(Boolean).filter(answer => answer.correct);
-
-  const weak = [...new Set(wrong.map(answer => answer.area))];
-  const strengths = [...new Set(right.map(answer => answer.area))];
-
-  let headline = "Good start — keep building.";
-  if (pct >= 80) headline = "Strong work — you're getting it.";
-  else if (pct < 50) headline = "You've found the areas to work on.";
-
-  $("#progressContent").innerHTML = `
-    <div class="summary-hero">
-      <div class="score-ring" style="--score:${pct}%">
-        <div class="score-inner"><strong>${pct}%</strong><span>UNDERSTANDING</span></div>
-      </div>
-      <div>
-        <h2>${headline}</h2>
-        <p>You scored <b>${state.score} out of ${total}</b> on this ${state.topic} practice session. Futurev uses the mistakes to suggest your next study step.</p>
-      </div>
-    </div>
-
-    <div class="summary-grid">
-      <article class="summary-card">
-        <h3>You're doing well in</h3>
-        <div class="tag-list">
-          ${strengths.length ? strengths.map(item => `<span class="tag">✓ ${item}</span>`).join("") : `<span class="empty">Keep practising to build your strengths.</span>`}
-        </div>
-      </article>
-
-      <article class="summary-card">
-        <h3>Needs more attention</h3>
-        <div class="tag-list">
-          ${weak.length ? weak.map(item => `<span class="tag warn">⚠ ${item}</span>`).join("") : `<span class="tag">No clear weak area</span>`}
-        </div>
-      </article>
-
-      <article class="summary-card recommendation">
-        <h3>Recommended next step</h3>
-        <p>${weak.length
-          ? `Review <b>${weak.join(", ")}</b>, then take a short targeted practice set focused on those areas.`
-          : "Move to a harder practice set to test deeper understanding."}</p>
-        <button id="retryBtn" class="btn btn-primary">${weak.length ? "Practise again →" : "Try a harder set →"}</button>
-      </article>
-    </div>
-  `;
-
-  $("#retryBtn").addEventListener("click", () => {
-    state.questionIndex = 0;
-    state.selected = null;
-    state.submitted = false;
-    state.score = 0;
-    state.answers = [];
-    saveState();
-    routeTo("practice");
-  });
-}
-
-function startSession() {
-  const topic = $("#topicInput").value.trim() || "Photosynthesis";
-  state.topic = topic;
-  state.questionIndex = 0;
-  state.selected = null;
-  state.submitted = false;
-  state.score = 0;
-  state.answers = [];
-
-  if (topic.toLowerCase() !== "photosynthesis") {
-    toast("The MVP currently demonstrates Photosynthesis.");
-    $("#topicInput").value = "Photosynthesis";
-    state.topic = "Photosynthesis";
-  }
-
-  saveState();
-  routeTo("learn");
-}
-
-function init() {
-  loadState();
-  bindNavigation();
-  $("#startBtn").addEventListener("click", startSession);
-  $("#menuBtn").addEventListener("click", () => $("#mobileNav").classList.toggle("open"));
-  window.addEventListener("hashchange", () => {
-    const route = location.hash.replace("#", "");
-    if (["home","learn","practice","progress"].includes(route)) routeTo(route);
-  });
-
-  const initial = location.hash.replace("#", "");
-  if (["home","learn","practice","progress"].includes(initial)) routeTo(initial);
-  else routeTo("home");
-}
-
-init();
+function renderSubjects(){$("#allSubjects").innerHTML=subjects.map(subjectCard).join("");bindSubjectCards()}
+function getSubject(){return subjects.find(s=>s.id===state.subject)||subjects[0]}
+function renderTopics(){const s=getSubject();$("#topicHeader").innerHTML=`<div class="lesson-title"><div><span class="eyebrow">${s.icon} / ${s.name.toUpperCase()}</span><h1>Choose a topic.</h1><p>Pick a topic and Futurev will guide you through learning and practice.</p></div><div class="subject-icon">${s.icon}</div></div>`;$("#topicGrid").innerHTML=s.topics.map((t,i)=>`<article class="topic-card"><strong>${t}</strong><p>${topicDesc(t)}</p><button data-topic="${t}">Study topic →</button></article>`).join("");$$("[data-topic]").forEach(b=>b.onclick=()=>{state.topic=b.dataset.topic;state.set=(state.subject==="biology"&&state.topic==="Osmosis & Diffusion")?"seed":"generic";state.qi=0;state.selected=null;state.submitted=false;state.score=0;state.answers=[];route("learn")})}
+function topicDesc(t){let d={Algebra:"Expressions, equations and manipulation.","Simultaneous Equations":"Solve two equations together.","Osmosis & Diffusion":"Movement of water and molecules.",Chemistry:"Atoms, bonding and reactions.",Motion:"Speed, distance and acceleration.",Comprehension:"Read, infer and answer accurately."};return d[t]||"Build the core ideas, then test yourself with practice."}
+function renderLesson(){const s=getSubject();$("#lessonHeader").innerHTML=`<div class="lesson-title"><div><span class="eyebrow">${s.name.toUpperCase()} / ${state.topic.toUpperCase()}</span><h1>${state.topic}</h1><p>Understand the core idea before you practise.</p></div><span class="step-badge">STEP 1 OF 3</span></div>`;let special=state.subject==="biology"&&state.topic==="Osmosis & Diffusion";$("#lessonBody").innerHTML=`<div class="lesson-card"><h2>${special?"Osmosis & diffusion":"${state.topic}"}</h2><p>${special?"<b>Diffusion</b> is the net movement of molecules from a region of higher concentration to a region of lower concentration. <b>Osmosis</b> is the movement of water molecules across a selectively permeable membrane.":"Futurev introduces the key concepts for this topic in simple secondary-school language. In the full AI version, this lesson will be generated and adapted to the learner's level."}</p><ul>${special?"<li>Diffusion is broader; osmosis specifically concerns water.</li><li>Osmosis requires a selectively permeable membrane.</li><li>Hypotonic, hypertonic and isotonic solutions affect cells differently.</li><li>The plant cell wall helps resist bursting in hypotonic conditions.</li>":"<li>Learn the definitions and key terms.</li><li>Understand the relationships between the main ideas.</li><li>Practise applying the concept to exam-style questions.</li><li>Ask the AI Coach whenever a step is unclear.</li>"}</ul></div>`}
+function questions(){return state.set==="seed"?seed:state.set==="follow"?follow:genericQuestions()}
+const genericQuestions=[{area:"Core concept",q:"What is the best first step when learning a new topic?",o:["Memorise every answer immediately","Understand the key concept and terms","Skip examples","Avoid practice"],a:1,e:"Understanding the core concept gives you a foundation for applying it in questions."},{area:"Application",q:"Why is practice useful after learning a concept?",o:["It reveals what you can apply and what needs review","It guarantees every exam question","It replaces learning","It removes the need to revise"],a:0,e:"Practice helps reveal strengths and gaps."}];
+function renderQuiz(){let qs=questions(),q=qs[state.qi]||qs[0];$("#questionCount").textContent=`${state.set==="seed"?"SEED":state.set==="follow"?"FOLLOW-UP":"PRACTICE"} • ${state.qi+1} OF ${qs.length}`;$("#quizCard").innerHTML=`<span class="question-number">${state.set==="seed"?"SUPPLIED WAEC PAST QUESTION":"WAEC-STYLE PRACTICE"}</span><h2>${q.q}</h2><div class="options">${q.o.map((o,i)=>`<button class="option ${state.selected===i?"selected":""}" data-i="${i}" ${state.submitted?"disabled":""}><span class="option-key">${"ABCD"[i]}</span>${o}</button>`).join("")}</div><div id="feedback"></div><div class="quiz-footer"><small>${state.submitted?"Answer reviewed.":"Choose one answer."}</small><button id="quizAction" class="btn btn-primary" ${state.selected===null?"disabled":""}>${state.submitted?(state.qi===qs.length-1?"Continue →":"Next →"):"Submit answer"}</button></div>`;if(state.submitted){let r=state.answers[state.qi];$("#feedback").innerHTML=`<div class="feedback ${r.correct?"correct":"wrong"}"><strong>${r.correct?"✓ Correct":"✗ Not quite"}</strong>${r.correct?"Nice work.":"The correct answer is <b>"+q.o[q.a]+"</b>."} ${q.e}</div><div class="coach-line">✦ <b>AI Coach:</b> ${r.correct?"Good progress — connect this answer back to the core definition.":"Review this idea once more, then test yourself again before moving on."}</div>`}$$(".option").forEach(b=>b.onclick=()=>{if(state.submitted)return;state.selected=+b.dataset.i;renderQuiz()});$("#quizAction").onclick=nextQuiz}
+function nextQuiz(){let qs=questions();if(!state.submitted){let q=qs[state.qi],correct=state.selected===q.a;state.answers[state.qi]={correct,area:q.area};if(correct)state.score++;state.submitted=true;save();renderQuiz();return}if(state.qi===qs.length-1){if(state.set==="seed"&&state.score>=4){state.set="follow";state.qi=0;state.selected=null;state.submitted=false;state.score=0;state.answers=[];toast("Great — fresh follow-up questions unlocked.");save();renderQuiz()}else route("progress")}else{state.qi++;state.selected=null;state.submitted=false;save();renderQuiz()}}
+function renderProgress(){let a=state.answers.filter(Boolean),pct=a.length?Math.round(a.filter(x=>x.correct).length/a.length*100):72,weak=[...new Set(a.filter(x=>!x.correct).map(x=>x.area))],strong=[...new Set(a.filter(x=>x.correct).map(x=>x.area))];$("#progressContent").innerHTML=`<div class="summary-hero"><div class="score-ring" style="--score:${pct}%"><div class="score-inner"><strong>${pct}%</strong><span>SESSION</span></div></div><div><h2>${pct>=80?"Strong work — keep going.":pct>=60?"Good foundation — sharpen the gaps.":"You've found the areas to work on."}</h2><p>Your current session result is <b>${a.filter(x=>x.correct).length}/${a.length||5}</b>. Futurev uses mistakes to recommend what to review next.</p></div></div><div class="summary-grid"><article class="summary-card"><h3>Strengths</h3><div class="tags">${strong.length?strong.map(x=>`<span class="tag">✓ ${x}</span>`).join(""):"<span class='tag'>Keep practising</span>"}</div></article><article class="summary-card"><h3>Needs attention</h3><div class="tags">${weak.length?weak.map(x=>`<span class="tag warn">⚠ ${x}</span>`).join(""):"<span class='tag'>No clear weak area</span>"}</div></article><article class="summary-card wide"><h3>Next study step</h3><p style="color:var(--muted);line-height:1.7">${weak.length?"Review "+weak.join(", ")+" before taking another targeted practice set.":"Move to a harder practice set and use the AI Coach whenever a concept feels unclear."}</p><button class="btn btn-primary" id="again">Practise again →</button></article></div>`;$("#again").onclick=()=>{state.qi=0;state.selected=null;state.submitted=false;state.score=0;state.answers=[];route("practice")}}
+function coachReply(t){let q=t.toLowerCase();if(q.includes("osmosis")&&q.includes("diffusion"))return"Osmosis is the movement of water across a selectively permeable membrane. Diffusion is the movement of molecules from higher to lower concentration. A useful memory trick: osmosis = water.";if(q.includes("hypotonic"))return"A hypotonic solution has a lower solute concentration than the cell, so water tends to enter the cell by osmosis. A red blood cell can burst because it has no cell wall.";if(q.includes("simultaneous"))return"Start by aligning the two equations. Then eliminate one variable by adding or subtracting a suitable multiple of one equation from the other. Substitute the result back to find the second variable.";if(q.includes("covalent"))return"A covalent bond forms when atoms share pairs of electrons. It commonly occurs between non-metal atoms.";return"I can explain concepts, compare ideas, walk through examples, and help you revise. For the strongest answer, mention the subject or topic you're asking about."}
+function addMsg(type,text){let x=document.createElement("div");x.className="message "+type;x.innerHTML=type==="ai"?`<span class="ai-avatar">✦</span><div><b>Futurev Coach</b><p>${text}</p></div>`:`<div><b>You</b><p>${text}</p></div>`;$("#chatMessages").appendChild(x);x.scrollIntoView({behavior:"smooth",block:"nearest"})}
+$("#chatForm").onsubmit=e=>{e.preventDefault();let i=$("#chatInput"),t=i.value.trim();if(!t)return;addMsg("user",t);i.value="";setTimeout(()=>addMsg("ai",coachReply(t)),220)}
+$$(".suggestions button").forEach(b=>b.onclick=()=>{$("#chatInput").value=b.dataset.question;$("#chatForm").requestSubmit()});
+$("#menuBtn").onclick=()=>$("#mobileNav").classList.toggle("open");
+load();renderDashboard();route(location.hash.slice(1)||"dashboard");
+window.onhashchange=()=>{let r=location.hash.slice(1);if(["dashboard","subjects","topics","learn","practice","coach","progress"].includes(r))route(r)}

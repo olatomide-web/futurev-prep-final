@@ -1,164 +1,94 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Futurev Prep — a focused WAEC Biology learning assistant prototype.">
-  <title>Futurev Prep — Learn smarter</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Futurev Prep — multi-subject WAEC learning assistant.">
+<title>Futurev Prep — WAEC Study Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<header class="topbar">
+  <a class="brand" href="#dashboard"><span class="brand-mark">F</span><span>futurev<span class="dot">.</span></span></a>
+  <nav class="desktop-nav">
+    <button data-route="dashboard">Dashboard</button><button data-route="subjects">Subjects</button><button data-route="practice">Practice</button><button data-route="coach">AI Coach</button><button data-route="progress">Progress</button>
+  </nav>
+  <button id="menuBtn" class="mobile-menu" aria-label="Menu">☰</button>
+</header>
+<div id="mobileNav" class="mobile-nav">
+  <button data-route="dashboard">Dashboard</button><button data-route="subjects">Subjects</button><button data-route="practice">Practice</button><button data-route="coach">AI Coach</button><button data-route="progress">Progress</button>
+</div>
 
-  <header class="topbar">
-    <a class="brand" href="#home" aria-label="Futurev Prep home">
-      <span class="brand-mark">F</span>
-      <span>futurev<span class="dot">.</span></span>
-    </a>
-    <nav class="desktop-nav" aria-label="Main navigation">
-      <button data-route="learn">Learn</button>
-      <button data-route="practice">Practice</button>
-      <button data-route="progress">Progress</button>
-    </nav>
-    <button class="mobile-menu" id="menuBtn" aria-label="Open menu">☰</button>
-  </header>
+<main>
+<section id="dashboard" class="view active">
+ <div class="container dashboard">
+  <div class="welcome"><div><span class="eyebrow">WAEC PREP • BETA</span><h1>Study smarter,<br><em>one topic at a time.</em></h1><p>Learn concepts, practise exam-style questions, ask your AI Coach, and see exactly where you need more work.</p></div><div class="streak"><strong>4</strong><span>DAY STREAK 🔥</span></div></div>
 
-  <div id="mobileNav" class="mobile-nav">
-    <button data-route="learn">Learn</button>
-    <button data-route="practice">Practice</button>
-    <button data-route="progress">Progress</button>
+  <div class="continue-card">
+   <div class="continue-info"><span class="mini-label">CONTINUE LEARNING</span><h2>Osmosis & Diffusion</h2><p><span class="subject-dot">BIO</span> Biology · Seed practice</p></div>
+   <div class="continue-score"><div class="mini-progress"><span style="width:80%"></span></div><small>4 / 5 completed</small></div>
+   <button class="btn btn-primary" data-action="continue">Continue →</button>
   </div>
 
-  <main>
-    <!-- HOME -->
-    <section id="home" class="view active">
-      <div class="container hero">
-        <div class="hero-copy">
-          <span class="pill"><span class="pulse"></span> WAEC PREP • BETA</span>
-          <h1>Study with a plan.<br><em>Not just a chatbot.</em></h1>
-          <p>Understand a topic, practise it, see where you struggle, and know what to study next.</p>
-        </div>
+  <div class="section-head"><div><span class="eyebrow">EXPLORE</span><h2>What do you want to study?</h2></div><button class="text-btn" data-route="subjects">View all subjects →</button></div>
+  <div id="subjectGrid" class="subject-grid"></div>
 
-        <div class="study-card">
-          <div class="card-top">
-            <div>
-              <span class="label">START A STUDY SESSION</span>
-              <h2>What are you learning today?</h2>
-            </div>
-            <div class="subject-icon">BIO</div>
-          </div>
-          <div class="field-grid">
-            <label>
-              <span>Subject</span>
-              <select id="subject">
-                <option>Biology</option>
-              </select>
-            </label>
-            <label>
-              <span>Topic</span>
-              <input id="topicInput" value="Photosynthesis" autocomplete="off">
-            </label>
-          </div>
-          <button id="startBtn" class="btn btn-primary btn-wide">Start learning <span>→</span></button>
-          <p class="privacy-note">Text-first and lightweight. No account required for this demo.</p>
-        </div>
+  <div class="dashboard-bottom">
+   <article class="progress-card"><div class="section-head"><div><span class="eyebrow">YOUR PROGRESS</span><h2>Keep the momentum.</h2></div><button class="text-btn" data-route="progress">Details →</button></div><div id="progressBars"></div></article>
+   <article class="coach-banner"><span class="ai-avatar big">✦</span><span class="eyebrow">AI COACH</span><h2>Stuck on something?</h2><p>Ask a question in plain language and get a clear, exam-focused explanation.</p><button class="btn btn-light" data-route="coach">Ask Futurev →</button></article>
+  </div>
+ </div>
+</section>
 
-        <div class="feature-row">
-          <div><span class="feature-number">01</span><strong>Learn</strong><small>Simple explanations</small></div>
-          <div><span class="feature-number">02</span><strong>Practise</strong><small>Exam-style questions</small></div>
-          <div><span class="feature-number">03</span><strong>Improve</strong><small>Find your weak spots</small></div>
-        </div>
-      </div>
-    </section>
+<section id="subjects" class="view">
+ <div class="container">
+  <div class="page-heading"><div><span class="eyebrow">WAEC SUBJECTS</span><h1>Choose your subject.</h1><p>Pick a subject to explore its topics and start a focused study session.</p></div></div>
+  <div id="allSubjects" class="all-subjects"></div>
+ </div>
+</section>
 
-    <!-- LEARN -->
-    <section id="learn" class="view">
-      <div class="container narrow">
-        <div class="progress-line"><span class="filled"></span><span></span><span></span></div>
-        <div class="page-heading">
-          <div>
-            <span class="eyebrow">BIOLOGY / PHOTOSYNTHESIS</span>
-            <h1>Let's understand it first.</h1>
-            <p>Read the short lesson, then test what you remember.</p>
-          </div>
-          <span class="step-badge">STEP 1 OF 3</span>
-        </div>
+<section id="topics" class="view">
+ <div class="container narrow">
+  <button class="back-link" data-route="subjects">← All subjects</button>
+  <div id="topicHeader"></div>
+  <div id="topicGrid" class="topic-grid"></div>
+ </div>
+</section>
 
-        <article class="lesson-card">
-          <div class="lesson-icon">☼</div>
-          <div>
-            <h2>What is photosynthesis?</h2>
-            <p>Photosynthesis is the process by which green plants use light energy to make food from carbon dioxide and water. It takes place mainly in chloroplasts, where chlorophyll absorbs light energy.</p>
-          </div>
-        </article>
+<section id="learn" class="view">
+ <div class="container narrow">
+  <div class="progress-line"><span class="filled"></span><span></span><span></span></div>
+  <div id="lessonHeader"></div><article id="lessonBody"></article>
+  <div class="chat-preview"><div><span class="ai-avatar">✦</span><div><b>Have a question?</b><p>Ask Futurev about this topic anytime.</p></div></div><button class="btn btn-secondary" data-route="coach">Ask AI Coach →</button></div>
+  <div class="action-row"><button class="btn btn-secondary" data-route="topics">← Topics</button><button class="btn btn-primary" data-route="practice">Start practice →</button></div>
+ </div>
+</section>
 
-        <div class="two-col">
-          <article class="info-card">
-            <span class="mini-label">KEY POINTS</span>
-            <ul class="check-list">
-              <li>Light provides the energy.</li>
-              <li>Carbon dioxide and water are raw materials.</li>
-              <li>Chlorophyll absorbs light energy.</li>
-              <li>Glucose is produced and oxygen is released.</li>
-            </ul>
-          </article>
-          <article class="info-card formula-card">
-            <span class="mini-label">IN SIMPLE FORM</span>
-            <div class="formula">CO₂ + H₂O <span>→</span> Glucose + O₂</div>
-            <p>Light energy is captured by chlorophyll to drive the process.</p>
-          </article>
-        </div>
+<section id="practice" class="view">
+ <div class="container narrow">
+  <div class="progress-line"><span class="filled"></span><span class="filled"></span><span></span></div>
+  <div class="page-heading compact"><div><span class="eyebrow">PRACTICE</span><h1>Check your understanding.</h1><p id="practiceIntro">Answer the seed questions, then unlock fresh follow-ups.</p></div><span id="questionCount" class="step-badge"></span></div>
+  <article id="quizCard" class="quiz-card"></article>
+ </div>
+</section>
 
-        <div class="action-row">
-          <button class="btn btn-secondary" data-route="home">← Back</button>
-          <button class="btn btn-primary" data-route="practice">Start practice <span>→</span></button>
-        </div>
-      </div>
-    </section>
+<section id="coach" class="view">
+ <div class="container narrow">
+  <div class="page-heading"><div><span class="eyebrow">AI COACH</span><h1>Ask a follow-up.</h1><p>Your coach is here to explain concepts in simple, exam-focused language.</p></div></div>
+  <div class="chat-card"><div id="chatMessages" class="chat-messages"><div class="message ai"><span class="ai-avatar">✦</span><div><b>Futurev Coach</b><p>Ask me about any of your study topics. Try: “Explain osmosis simply” or “How do I solve simultaneous equations?”</p></div></div></div>
+   <form id="chatForm" class="chat-form"><input id="chatInput" placeholder="Ask a question..." autocomplete="off"><button class="btn btn-primary">Ask</button></form>
+   <div class="suggestions"><button data-question="Explain osmosis simply.">Osmosis</button><button data-question="State three differences between osmosis and diffusion.">Biology theory</button><button data-question="How do I solve simultaneous equations?">Maths</button><button data-question="What is a covalent bond?">Chemistry</button></div>
+  </div>
+ </div>
+</section>
 
-    <!-- PRACTICE -->
-    <section id="practice" class="view">
-      <div class="container narrow">
-        <div class="progress-line"><span class="filled"></span><span class="filled"></span><span></span></div>
-        <div class="page-heading compact">
-          <div>
-            <span class="eyebrow">PRACTICE</span>
-            <h1>Check your understanding.</h1>
-            <p>Choose the best answer. We'll explain the result after each question.</p>
-          </div>
-          <span id="questionCount" class="step-badge">QUESTION 1 OF 5</span>
-        </div>
-
-        <article id="quizCard" class="quiz-card"></article>
-      </div>
-    </section>
-
-    <!-- PROGRESS -->
-    <section id="progress" class="view">
-      <div class="container narrow">
-        <div class="progress-line"><span class="filled"></span><span class="filled"></span><span class="filled"></span></div>
-        <div class="page-heading">
-          <div>
-            <span class="eyebrow">SESSION SUMMARY</span>
-            <h1>Here's what we found.</h1>
-            <p>Your results become your next study step.</p>
-          </div>
-        </div>
-        <div id="progressContent"></div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="container footer-inner">
-      <span>futurev<span class="dot">.</span> prep</span>
-      <span>AI learning assistant • Prototype</span>
-    </div>
-  </footer>
-
-  <script src="app.js"></script>
+<section id="progress" class="view">
+ <div class="container narrow"><div class="page-heading"><div><span class="eyebrow">MY PROGRESS</span><h1>See where you're growing.</h1><p>Futurev turns practice results into your next study step.</p></div></div><div id="progressContent"></div></div>
+</section>
+</main>
+<footer><div class="container footer-inner"><span>futurev<span class="dot">.</span> prep</span><span>WAEC learning assistant • Prototype</span></div></footer>
+<script src="app.js"></script>
 </body>
 </html>
