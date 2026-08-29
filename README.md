@@ -33,3 +33,6 @@ The five Osmosis & Diffusion seed questions in this prototype are the questions 
 
 ## Run
 Open `index.html` in a modern browser or serve this folder with a static web server.
+
+## Seed flow fix
+The Learn → Start practice action explicitly initializes the Biology → Osmosis & Diffusion seed set and resets stale session state. The quiz renderer also validates the selected question set before rendering.
