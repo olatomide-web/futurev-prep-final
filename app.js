@@ -30,7 +30,7 @@ const follow=[
  {area:"Hypotonic solutions",q:"Why is a plant cell less likely than a red blood cell to burst in a hypotonic solution?",o:["It has no membrane","It has a rigid cell wall","It contains no water","It cannot take in water"],a:1,e:"The rigid cell wall resists excessive expansion when water enters the plant cell."},
  {area:"Osmosis vs diffusion",q:"Which statement correctly distinguishes osmosis from diffusion?",o:["Osmosis involves only water, while diffusion can involve molecules or particles","Osmosis always requires energy, while diffusion always uses ATP","Diffusion occurs only in plant cells","Osmosis is movement of solute from low to high concentration"],a:0,e:"Osmosis is specifically water movement across a selectively permeable membrane; diffusion is broader."}
 ];
-let state={route:"dashboard",subject:"biology",topic:"Osmosis & Diffusion",set:"seed",qi:0,selected:null,submitted:false,score:0,answers:[]};
+let state={route:"dashboard",subject:"biology",topic:"Osmosis & Diffusion",set:"seed",qi:0,selected:null,submitted:false,score:0,answers:[],followupQuestions:null};
 function save(){sessionStorage.setItem("futurevMulti",JSON.stringify(state))}
 function load(){try{Object.assign(state,JSON.parse(sessionStorage.getItem("futurevMulti")||"{}"))}catch(e){}}
 function toast(m){let x=$("#toast");x.textContent=m;x.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>x.classList.remove("show"),2200)}
@@ -53,7 +53,7 @@ function renderDashboard(){
 }
 function renderSubjects(){$("#allSubjects").innerHTML=subjects.map(subjectCard).join("");bindSubjectCards()}
 function getSubject(){return subjects.find(s=>s.id===state.subject)||subjects[0]}
-function renderTopics(){const s=getSubject();$("#topicHeader").innerHTML=`<div class="lesson-title"><div><span class="eyebrow">${s.icon} / ${s.name.toUpperCase()}</span><h1>Choose a topic.</h1><p>Pick a topic and Futurev will guide you through learning and practice.</p></div><div class="subject-icon">${s.icon}</div></div>`;$("#topicGrid").innerHTML=s.topics.map((t,i)=>`<article class="topic-card"><strong>${t}</strong><p>${topicDesc(t)}</p><button data-topic="${t}">Study topic →</button></article>`).join("");$$("[data-topic]").forEach(b=>b.onclick=()=>{state.topic=b.dataset.topic;state.set=(state.subject==="biology"&&state.topic==="Osmosis & Diffusion")?"seed":"generic";state.qi=0;state.selected=null;state.submitted=false;state.score=0;state.answers=[];route("learn")})}
+function renderTopics(){const s=getSubject();$("#topicHeader").innerHTML=`<div class="lesson-title"><div><span class="eyebrow">${s.icon} / ${s.name.toUpperCase()}</span><h1>Choose a topic.</h1><p>Pick a topic and Futurev will guide you through learning and practice.</p></div><div class="subject-icon">${s.icon}</div></div>`;$("#topicGrid").innerHTML=s.topics.map((t,i)=>`<article class="topic-card"><strong>${t}</strong><p>${topicDesc(t)}</p><button data-topic="${t}">Study topic →</button></article>`).join("");$$("[data-topic]").forEach(b=>b.onclick=()=>{state.topic=b.dataset.topic;state.set=(state.subject==="biology"&&state.topic==="Osmosis & Diffusion")?"seed":"generic";state.qi=0;state.selected=null;state.submitted=false;state.score=0;state.answers=[];state.followupQuestions=null;route("learn")})}
 function topicDesc(t){let d={Algebra:"Expressions, equations and manipulation.","Simultaneous Equations":"Solve two equations together.","Osmosis & Diffusion":"Movement of water and molecules.",Chemistry:"Atoms, bonding and reactions.",Motion:"Speed, distance and acceleration.",Comprehension:"Read, infer and answer accurately."};return d[t]||"Build the core ideas, then test yourself with practice."}
 function startTopicPractice(){
   const isSeedTopic = state.subject === "biology" && state.topic === "Osmosis & Diffusion";
@@ -70,7 +70,7 @@ function renderLesson(){const s=getSubject();$("#lessonHeader").innerHTML=`<div 
 function questions(){
   const isSeedTopic = state.subject === "biology" && state.topic === "Osmosis & Diffusion";
   if (isSeedTopic && state.set === "seed") return seed;
-  if (isSeedTopic && state.set === "follow") return follow;
+  if (isSeedTopic && state.set === "follow") return state.followupQuestions && state.followupQuestions.length ? state.followupQuestions : follow;
   return genericQuestions;
 }
 const genericQuestions=[{area:"Core concept",q:"What is the best first step when learning a new topic?",o:["Memorise every answer immediately","Understand the key concept and terms","Skip examples","Avoid practice"],a:1,e:"Understanding the core concept gives you a foundation for applying it in questions."},{area:"Application",q:"Why is practice useful after learning a concept?",o:["It reveals what you can apply and what needs review","It guarantees every exam question","It replaces learning","It removes the need to revise"],a:0,e:"Practice helps reveal strengths and gaps."}];
@@ -79,11 +79,70 @@ function renderQuiz(){
  if(!Array.isArray(qs)||qs.length===0){qs=genericQuestions;state.qi=0;state.selected=null;state.submitted=false;}
  if(state.qi<0||state.qi>=qs.length) state.qi=0;
  let q=qs[state.qi];$("#questionCount").textContent=`${state.set==="seed"?"SEED":state.set==="follow"?"FOLLOW-UP":"PRACTICE"} • ${state.qi+1} OF ${qs.length}`;$("#practiceIntro").textContent=state.set==="seed"?"Five supplied WAEC past questions on Osmosis & Diffusion. Score 4/5 or better to unlock fresh follow-ups.":state.set==="follow"?"Fresh WAEC-style follow-up questions on the same topic — no repeated seed questions.":"Practice this topic, then use your result to decide what to review next.";$("#quizCard").innerHTML=`<span class="question-number">${state.set==="seed"?"SUPPLIED WAEC PAST QUESTION":"WAEC-STYLE PRACTICE"}</span><h2>${q.q}</h2><div class="options">${q.o.map((o,i)=>`<button class="option ${state.selected===i?"selected":""}" data-i="${i}" ${state.submitted?"disabled":""}><span class="option-key">${"ABCD"[i]}</span>${o}</button>`).join("")}</div><div id="feedback"></div><div class="quiz-footer"><small>${state.submitted?"Answer reviewed.":"Choose one answer."}</small><button id="quizAction" class="btn btn-primary" ${state.selected===null?"disabled":""}>${state.submitted?(state.qi===qs.length-1?"Continue →":"Next →"):"Submit answer"}</button></div>`;if(state.submitted){let r=state.answers[state.qi];$("#feedback").innerHTML=`<div class="feedback ${r.correct?"correct":"wrong"}"><strong>${r.correct?"✓ Correct":"✗ Not quite"}</strong>${r.correct?"Nice work.":"The correct answer is <b>"+q.o[q.a]+"</b>."} ${q.e}</div><div class="coach-line">✦ <b>AI Coach:</b> ${r.correct?"Good progress — connect this answer back to the core definition.":"Review this idea once more, then test yourself again before moving on."}</div>`}$$(".option").forEach(b=>b.onclick=()=>{if(state.submitted)return;state.selected=+b.dataset.i;renderQuiz()});$("#quizAction").onclick=nextQuiz}
-function nextQuiz(){let qs=questions();if(!state.submitted){let q=qs[state.qi],correct=state.selected===q.a;state.answers[state.qi]={correct,area:q.area};if(correct)state.score++;state.submitted=true;save();renderQuiz();return}if(state.qi===qs.length-1){if(state.set==="seed"&&state.score>=4){state.set="follow";state.qi=0;state.selected=null;state.submitted=false;state.score=0;state.answers=[];toast("Great — fresh follow-up questions unlocked.");save();renderQuiz()}else route("progress")}else{state.qi++;state.selected=null;state.submitted=false;save();renderQuiz()}}
+async function nextQuiz(){
+ let qs=questions();
+ if(!state.submitted){
+  let q=qs[state.qi],correct=state.selected===q.a;
+  state.answers[state.qi]={correct,area:q.area};
+  if(correct)state.score++;
+  state.submitted=true;save();renderQuiz();return;
+ }
+ if(state.qi===qs.length-1){
+  if(state.set==="seed"&&state.score>=4){
+   const seedSummary=seed.map((q,i)=>`${i+1}. ${q.q} Options: ${q.o.join(" | ")}`).join("\n");
+   toast("4/5+ achieved — generating fresh follow-up questions…");
+   try{
+    const result=await callFuturevAI({mode:"followup",message:`Generate 5 fresh follow-up questions for the same topic. Do not repeat or lightly reword these seed questions:
+${seedSummary}`});
+    if(!Array.isArray(result.questions)||result.questions.length<5)throw new Error("The AI returned fewer than 5 follow-up questions.");
+    state.followupQuestions=result.questions.slice(0,5).map(q=>({area:q.area||"Follow-up",q:q.q,o:Array.isArray(q.o)?q.o.slice(0,4):[],a:Number(q.a),e:q.e||"Review the concept and connect it to the question."})).filter(q=>q.q&&q.o.length===4&&q.a>=0&&q.a<4);
+    if(state.followupQuestions.length<5)throw new Error("The AI returned an invalid question format.");
+    state.set="follow";state.qi=0;state.selected=null;state.submitted=false;state.score=0;state.answers=[];save();toast("Fresh follow-up questions unlocked.");renderQuiz();
+   }catch(err){console.error("[Futurev AI] FOLLOW-UP GENERATION FAILED",err);toast("AI follow-up generation failed. Check the console/Vercel logs.");route("progress")}
+  }else route("progress");
+ }else{state.qi++;state.selected=null;state.submitted=false;save();renderQuiz()}
+}
 function renderProgress(){let a=state.answers.filter(Boolean),pct=a.length?Math.round(a.filter(x=>x.correct).length/a.length*100):72,weak=[...new Set(a.filter(x=>!x.correct).map(x=>x.area))],strong=[...new Set(a.filter(x=>x.correct).map(x=>x.area))];$("#progressContent").innerHTML=`<div class="summary-hero"><div class="score-ring" style="--score:${pct}%"><div class="score-inner"><strong>${pct}%</strong><span>SESSION</span></div></div><div><h2>${pct>=80?"Strong work — keep going.":pct>=60?"Good foundation — sharpen the gaps.":"You've found the areas to work on."}</h2><p>Your current session result is <b>${a.filter(x=>x.correct).length}/${a.length||5}</b>. Futurev uses mistakes to recommend what to review next.</p></div></div><div class="summary-grid"><article class="summary-card"><h3>Strengths</h3><div class="tags">${strong.length?strong.map(x=>`<span class="tag">✓ ${x}</span>`).join(""):"<span class='tag'>Keep practising</span>"}</div></article><article class="summary-card"><h3>Needs attention</h3><div class="tags">${weak.length?weak.map(x=>`<span class="tag warn">⚠ ${x}</span>`).join(""):"<span class='tag'>No clear weak area</span>"}</div></article><article class="summary-card wide"><h3>Next study step</h3><p style="color:var(--muted);line-height:1.7">${weak.length?"Review "+weak.join(", ")+" before taking another targeted practice set.":"Move to a harder practice set and use the AI Coach whenever a concept feels unclear."}</p><button class="btn btn-primary" id="again">Practise again →</button></article></div>`;$("#again").onclick=()=>{state.qi=0;state.selected=null;state.submitted=false;state.score=0;state.answers=[];route("practice")}}
-function coachReply(t){let q=t.toLowerCase();if(q.includes("osmosis")&&q.includes("diffusion"))return"Osmosis is the movement of water across a selectively permeable membrane. Diffusion is the movement of molecules from higher to lower concentration. A useful memory trick: osmosis = water.";if(q.includes("hypotonic"))return"A hypotonic solution has a lower solute concentration than the cell, so water tends to enter the cell by osmosis. A red blood cell can burst because it has no cell wall.";if(q.includes("simultaneous"))return"Start by aligning the two equations. Then eliminate one variable by adding or subtracting a suitable multiple of one equation from the other. Substitute the result back to find the second variable.";if(q.includes("covalent"))return"A covalent bond forms when atoms share pairs of electrons. It commonly occurs between non-metal atoms.";return"I can explain concepts, compare ideas, walk through examples, and help you revise. For the strongest answer, mention the subject or topic you're asking about."}
+async function callFuturevAI({message,mode="chat"}={}){
+  const payload={message,mode,subject:getSubject().name,topic:state.topic};
+  console.log("[Futurev AI] CALL FIRED", payload);
+  const started=Date.now();
+  try{
+    const response=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    const raw=await response.text();
+    console.log("[Futurev AI] RESPONSE",{status:response.status,ms:Date.now()-started,raw});
+    let data; try{data=JSON.parse(raw)}catch(e){throw new Error(`Server returned non-JSON (${response.status})`)}
+    if(!response.ok||!data.ok){
+      console.error("[Futurev AI] UPSTREAM FAILURE",data);
+      throw new Error(data.error||`AI request failed (${response.status})`);
+    }
+    return data;
+  }catch(err){
+    console.error("[Futurev AI] REQUEST FAILED",err);
+    throw err;
+  }
+}
+
+async function coachReply(t){
+  const data=await callFuturevAI({message:t,mode:"chat"});
+  return data.text;
+}
+
+window.testFuturevAI=async function(){
+  console.log("[Futurev AI TEST] Starting raw minimal API test...");
+  const result=await callFuturevAI({message:"Reply with exactly: Futurev API works.",mode:"chat"});
+  console.log("[Futurev AI TEST] SUCCESS",result);
+  return result;
+};
+
+window.checkFuturevAPI=async function(){
+  const r=await fetch("/api/chat");
+  const data=await r.json();
+  console.log("[Futurev API HEALTH]",data);
+  return data;
+};
 function addMsg(type,text){let x=document.createElement("div");x.className="message "+type;x.innerHTML=type==="ai"?`<span class="ai-avatar">✦</span><div><b>Futurev Coach</b><p>${text}</p></div>`:`<div><b>You</b><p>${text}</p></div>`;$("#chatMessages").appendChild(x);x.scrollIntoView({behavior:"smooth",block:"nearest"})}
-$("#chatForm").onsubmit=e=>{e.preventDefault();let i=$("#chatInput"),t=i.value.trim();if(!t)return;addMsg("user",t);i.value="";setTimeout(()=>addMsg("ai",coachReply(t)),220)}
+$("#chatForm").onsubmit=async e=>{e.preventDefault();let i=$("#chatInput"),t=i.value.trim();if(!t)return;addMsg("user",t);i.value="";const loading="Thinking…";addMsg("ai",loading);const bubble=$("#chatMessages .message.ai:last-child p");try{const answer=await coachReply(t);if(bubble)bubble.textContent=answer}catch(err){if(bubble)bubble.textContent=`AI Coach could not connect right now. ${err.message} Check the browser console and Vercel logs for request ID/details.`}}
 $$(".suggestions button").forEach(b=>b.onclick=()=>{$("#chatInput").value=b.dataset.question;$("#chatForm").requestSubmit()});
 $("#menuBtn").onclick=()=>$("#mobileNav").classList.toggle("open");
 load();renderDashboard();route(location.hash.slice(1)||"dashboard");

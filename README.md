@@ -36,3 +36,57 @@ Open `index.html` in a modern browser or serve this folder with a static web ser
 
 ## Seed flow fix
 The Learn → Start practice action explicitly initializes the Biology → Osmosis & Diffusion seed set and resets stale session state. The quiz renderer also validates the selected question set before rendering.
+
+## AI API debugging / deployment
+
+This build now uses a real server-side Vercel function at `/api/chat` instead of a local fake Coach response.
+
+### Browser diagnostics
+Open DevTools → Console and run:
+
+```js
+checkFuturevAPI()
+```
+
+This reports whether the deployed function sees `OPENAI_API_KEY` without exposing the key.
+
+For a raw minimal AI test:
+
+```js
+testFuturevAI()
+```
+
+The browser logs `CALL FIRED`, request payload (without secrets), response status/body, and any failure. The server logs the same request ID, model, prompt, upstream status, and failure details.
+
+### Vercel environment variable
+Set this in Vercel → Project → Settings → Environment Variables:
+
+- `OPENAI_API_KEY` = your OpenAI API key
+- optional `OPENAI_MODEL` = model ID; defaults to `gpt-5.6-luna`
+
+Redeploy after changing environment variables.
+
+The API key must stay server-side. Do not put it in `app.js`, HTML, or `NEXT_PUBLIC_*`/browser-exposed variables.
+
+
+## Real AI API diagnostics
+
+The AI Coach now uses the server-side Vercel function `/api/chat`. The browser never receives the API key.
+
+Open DevTools → Console after deployment:
+
+```js
+checkFuturevAPI()
+```
+
+This checks whether the server sees `OPENAI_API_KEY`. Then run:
+
+```js
+testFuturevAI()
+```
+
+That performs a minimal real AI request. Normal Coach requests log `CALL FIRED`, payload, response status/body, and errors in the browser. Vercel logs include a request ID, model, prompt, upstream status, and API configuration errors.
+
+For Vercel, set `OPENAI_API_KEY` in Project Settings → Environment Variables and redeploy. Optionally set `OPENAI_MODEL`; the default is `gpt-5.6-luna`.
+
+After a student scores 4/5 or better on the seed set, the app now calls `/api/chat` in `followup` mode to generate five fresh questions instead of using the hard-coded follow-up list.
